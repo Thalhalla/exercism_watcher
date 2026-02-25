@@ -1,4 +1,4 @@
-module watcher
+module exercism_watcher
 
 go 1.25.6
 
