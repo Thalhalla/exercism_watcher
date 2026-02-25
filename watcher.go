@@ -3,11 +3,23 @@ package main
 import (
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
 	"github.com/fsnotify/fsnotify"
 )
+
+func runTests(dir string) {
+	cmd := exec.Command("go", "test", "./...")
+	cmd.Dir = dir
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Printf("go test failed in %s: %v\n%s", dir, err, string(output))
+		return
+	}
+	log.Printf("go test succeeded in %s\n%s", dir, string(output))
+}
 
 func main() {
 	watcher, err := fsnotify.NewWatcher()
@@ -44,6 +56,8 @@ func main() {
 					return
 				}
 				log.Println("Event:", event)
+				dir := filepath.Dir(event.Name)
+				runTests(dir)
 			case err, ok := <-watcher.Errors:
 				if !ok {
 					return
