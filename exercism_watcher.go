@@ -6,11 +6,12 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-
 	"github.com/fsnotify/fsnotify"
 )
 
 func runTests(dir string) {
+	log.Println(">>>>>>>>>>>>>> RESTARTING LOOP <<<<<<<<<<<<<<<")
+
 	cmd := exec.Command("go", "test", "./...")
 	cmd.Dir = dir
 	output, err := cmd.CombinedOutput()
@@ -49,6 +50,7 @@ func main() {
 
 	// Process events
 	go func() {
+
 		for {
 			select {
 			case event, ok := <-watcher.Events:
