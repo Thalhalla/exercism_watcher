@@ -11,9 +11,9 @@ import (
 	"io/ioutil"
 )
 
-struct filelang {
+// struct filelang {
 
-}
+// }
 
 
 func runTests(dir string) {
@@ -29,10 +29,10 @@ func runTests(dir string) {
 	log.Printf("go test succeeded in %s\n%s", dir, string(output))
 }
 
-getTestCommand(language string) m{
+// getTestCommand(language string) m{
 
-	switch 
-}
+// 	switch 
+// }
 
 func getUserArgs() []string {
 	userArgs := os.Args[1:]
