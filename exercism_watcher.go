@@ -17,11 +17,12 @@ type codeSpec struct {
 
 func runTests(dir string, language string) {
 	log.Println(">>>>>>>>>>>>>> RESTARTING LOOP <<<<<<<<<<<<<<<")
-	// cmd := getTestCommand(language)
 	log.Printf("Detected Language:%s\n", language)
 
 	// TODO: quick and simple for now.  We can abstract this into func later (i.e. )
 	cmd := exec.Command("go", "test", "./...")
+
+	// cmd := getTestCommand(language)
 
 	switch {
 		case language == "Python" :
