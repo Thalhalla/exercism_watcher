@@ -11,17 +11,19 @@ import (
 	"io/ioutil"
 )
 
+type codeSpec struct {
+    language string
+}
+
 func runTests(dir string, language string) {
 	log.Println(">>>>>>>>>>>>>> RESTARTING LOOP <<<<<<<<<<<<<<<")
 	// cmd := getTestCommand(language)
 	log.Printf("Detected Language:%s\n", language)
 
 	// TODO: quick and simple for now.  We can abstract this into func later (i.e. )
-
 	cmd := exec.Command("go", "test", "./...")
 
 	switch {
-
 		case language == "Python" :
 			cmd = exec.Command("pytest")
 		default : 
@@ -32,10 +34,10 @@ func runTests(dir string, language string) {
 	cmd.Dir = dir
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Printf("go test failed in %s: %v\n%s", dir, err, string(output))
+		log.Printf("%s test failed in %s: %v\n%s", language, dir, err, string(output))
 		return
 	}
-	log.Printf("go test succeeded in %s\n%s", dir, string(output))
+	log.Printf("%s test succeeded in %s\n%s", language, dir, string(output))
 }
 
 func getTestCommand(language string) {
@@ -81,6 +83,10 @@ func main() {
 			return err
 		}
 		if d.IsDir() {
+			// Ignore Python specific directories
+			if d.Name() == "__pycache__" {
+				return filepath.SkipDir
+			}
 			// Ignore directories starting with '.'
 			if strings.HasPrefix(d.Name(), ".") && d.Name() != "." {
 				return filepath.SkipDir
