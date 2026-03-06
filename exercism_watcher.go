@@ -11,6 +11,11 @@ import (
 	"io/ioutil"
 )
 
+struct filelang {
+
+}
+
+
 func runTests(dir string) {
 	log.Println(">>>>>>>>>>>>>> RESTARTING LOOP <<<<<<<<<<<<<<<")
 
@@ -23,14 +28,24 @@ func runTests(dir string) {
 	}
 	log.Printf("go test succeeded in %s\n%s", dir, string(output))
 }
+
+getTestCommand(language string) m{
+
+	switch 
+}
+
 func getUserArgs() []string {
 	userArgs := os.Args[1:]
-	// log.Printf("first userArg:%s\n", userArgs[0])
+
+	if len(userArgs) > 0 {
+        // fmt.Println("First user argument:", userArgs[0])
+		log.Printf("first userArg:%s\n", userArgs[0])
+    }
+	
 	return userArgs
 }
-func getFileLang(filename string) string {
+func getFileLang(filePath string) string {
 	// Example: Detect the language of a file
-	filePath := "example.go"
 	content, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Fatalf("Error reading file: %v", err)
@@ -41,19 +56,16 @@ func getFileLang(filename string) string {
 	//fmt.Printf("File: %s\n", filePath)
 	log.Printf("File:%s\n", string(filePath))
 	log.Printf("Detected Language:%s\n", language)
-	// log.Printf("Reliable:%s\n", string(reliable))
 
 	return language
 }
 
 func main() {
-	// userArgs := os.Args[1:]
-	//  if len(userArgs) > 0 {
-	// 	log.Printf("User arguments: \n%s", string(userArgs[0]))
-    // }
-	getUserArgs()
+	userArgs := getUserArgs()
+	fl := getFileLang(userArgs[0])
 
 	// log.Fatal(string("Force stop"))
+	log.Printf("Detected File Language:%s\n", fl)
 
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
