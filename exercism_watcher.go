@@ -19,11 +19,14 @@ func runTests(dir string, language string) {
 	log.Println(">>>>>>>>>>>>>> RESTARTING LOOP <<<<<<<<<<<<<<<")
 	log.Printf("Detected Language:%s\n", language)
 
-	// TODO: quick and simple for now.  We can abstract this into func later (i.e. )
+	
 	cmd := exec.Command("go", "test", "./...")
 
+	// TODO: quick and simple for now.  We can abstract this into func later (i.e. )
 	// cmd := getTestCommand(language)
 
+	cmd = exec.Command("go", "test", "./...")
+	
 	switch {
 		case language == "Python" :
 			cmd = exec.Command("pytest")
