@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 	"github.com/fsnotify/fsnotify"
+	"github.com/go-enry/go-enry/v2"
+	"io/ioutil"
 )
 
 func runTests(dir string) {
@@ -21,8 +23,38 @@ func runTests(dir string) {
 	}
 	log.Printf("go test succeeded in %s\n%s", dir, string(output))
 }
+func getUserArgs() []string {
+	userArgs := os.Args[1:]
+	// log.Printf("first userArg:%s\n", userArgs[0])
+	return userArgs
+}
+func getFileLang(filename string) string {
+	// Example: Detect the language of a file
+	filePath := "example.go"
+	content, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		log.Fatalf("Error reading file: %v", err)
+	}
+
+	language := enry.GetLanguage(filePath, content)
+
+	//fmt.Printf("File: %s\n", filePath)
+	log.Printf("File:%s\n", string(filePath))
+	log.Printf("Detected Language:%s\n", language)
+	// log.Printf("Reliable:%s\n", string(reliable))
+
+	return language
+}
 
 func main() {
+	// userArgs := os.Args[1:]
+	//  if len(userArgs) > 0 {
+	// 	log.Printf("User arguments: \n%s", string(userArgs[0]))
+    // }
+	getUserArgs()
+
+	// log.Fatal(string("Force stop"))
+
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Fatal(err)
