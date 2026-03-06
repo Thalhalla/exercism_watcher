@@ -49,9 +49,10 @@ func getTestCommand(language string) {
 }
 
 func getUserArgs() []string {
-	userArgs := os.Args[1:]
-	
+	var userArgs []string
+	userArgs = os.Args[1:]
 	return userArgs
+	
 }
 func getFileLang(filePath string) string {
 	// Example: Detect the language of a file
@@ -105,6 +106,11 @@ func main() {
 
 		userArgs := getUserArgs()
 		codeLanguage := getFileLang(userArgs[0])
+
+		if codeLanguage == "" {
+			// default to go when 0 args
+			codeLanguage = "go"
+		}
 
 		for {
 			select {
