@@ -11,15 +11,24 @@ import (
 	"io/ioutil"
 )
 
-// struct filelang {
-
-// }
-
-
-func runTests(dir string) {
+func runTests(dir string, language string) {
 	log.Println(">>>>>>>>>>>>>> RESTARTING LOOP <<<<<<<<<<<<<<<")
+	// cmd := getTestCommand(language)
+	log.Printf("Detected Language:%s\n", language)
+
+	// TODO: quick and simple for now.  We can abstract this into func later (i.e. )
 
 	cmd := exec.Command("go", "test", "./...")
+
+	switch {
+
+		case language == "Python" :
+			cmd = exec.Command("pytest")
+		default : 
+		// defaults to go
+			cmd = exec.Command("go", "test", "./...")
+	}
+	
 	cmd.Dir = dir
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -29,18 +38,16 @@ func runTests(dir string) {
 	log.Printf("go test succeeded in %s\n%s", dir, string(output))
 }
 
-// getTestCommand(language string) m{
+func getTestCommand(language string) {
 
-// 	switch 
-// }
+	log.Println(">getTestCommand<")
+	// switch {
+	// cmd := exec.Command("go", "test", "./...")
+	// }
+}
 
 func getUserArgs() []string {
 	userArgs := os.Args[1:]
-
-	if len(userArgs) > 0 {
-        // fmt.Println("First user argument:", userArgs[0])
-		log.Printf("first userArg:%s\n", userArgs[0])
-    }
 	
 	return userArgs
 }
@@ -54,18 +61,13 @@ func getFileLang(filePath string) string {
 	language := enry.GetLanguage(filePath, content)
 
 	//fmt.Printf("File: %s\n", filePath)
-	log.Printf("File:%s\n", string(filePath))
-	log.Printf("Detected Language:%s\n", language)
+	// log.Printf("File:%s\n", string(filePath))
+	// log.Printf("Detected Language:%s\n", language)
 
 	return language
 }
 
 func main() {
-	userArgs := getUserArgs()
-	fl := getFileLang(userArgs[0])
-
-	// log.Fatal(string("Force stop"))
-	log.Printf("Detected File Language:%s\n", fl)
 
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -95,6 +97,9 @@ func main() {
 	// Process events
 	go func() {
 
+		userArgs := getUserArgs()
+		codeLanguage := getFileLang(userArgs[0])
+
 		for {
 			select {
 			case event, ok := <-watcher.Events:
@@ -103,7 +108,7 @@ func main() {
 				}
 				log.Println("Event:", event)
 				dir := filepath.Dir(event.Name)
-				runTests(dir)
+				runTests(dir, codeLanguage)
 			case err, ok := <-watcher.Errors:
 				if !ok {
 					return
