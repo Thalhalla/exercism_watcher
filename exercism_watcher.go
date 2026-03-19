@@ -26,7 +26,7 @@ func runTests(dir string, language string) {
 	
 	switch {
 		case language == "Python" :
-			cmd = exec.Command("pytest --disable-warnings")
+			cmd = exec.Command("pytest", "--disable-warnings")
 		default : 
 		// defaults to go
 			cmd = exec.Command("go", "test", "./...")
