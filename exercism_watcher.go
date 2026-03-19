@@ -19,17 +19,14 @@ func runTests(dir string, language string) {
 	log.Println(">>>>>>>>>>>>>> RESTARTING LOOP <<<<<<<<<<<<<<<")
 	log.Printf("Detected Language:%s\n", language)
 
-	
 	cmd := exec.Command("go", "test", "./...")
 
 	// TODO: quick and simple for now.  We can abstract this into func later (i.e. )
 	// cmd := getTestCommand(language)
-
-	cmd = exec.Command("go", "test", "./...")
 	
 	switch {
 		case language == "Python" :
-			cmd = exec.Command("pytest")
+			cmd = exec.Command("pytest --disable-warnings")
 		default : 
 		// defaults to go
 			cmd = exec.Command("go", "test", "./...")
@@ -54,10 +51,12 @@ func getTestCommand(language string) {
 
 func getUserArgs() []string {
 	var userArgs []string
-	userArgs = os.Args[1:]
+	if len(os.Args) > 0 {
+		userArgs = os.Args[1:]
+	}
 	return userArgs
-	
 }
+
 func getFileLang(filePath string) string {
 	// Example: Detect the language of a file
 	content, err := ioutil.ReadFile(filePath)
@@ -67,10 +66,15 @@ func getFileLang(filePath string) string {
 
 	language := enry.GetLanguage(filePath, content)
 
+	if language == "" {
+		language = "go"
+	}
+
 	//fmt.Printf("File: %s\n", filePath)
 	// log.Printf("File:%s\n", string(filePath))
 	// log.Printf("Detected Language:%s\n", language)
 
+	//codeSpec.language = language
 	return language
 }
 
@@ -108,13 +112,10 @@ func main() {
 	// Process events
 	go func() {
 
-		userArgs := getUserArgs()
-		codeLanguage := getFileLang(userArgs[0])
-
-		if codeLanguage == "" {
-			// default to go when 0 args
-			codeLanguage = "go"
-		}
+		// if codeLanguage != getFileLang(userArgs[1]) {
+		// 	// default to go when 0 args
+		// 	codeLanguage = "go"
+		// }
 
 		for {
 			select {
@@ -124,6 +125,9 @@ func main() {
 				}
 				log.Println("Event:", event)
 				dir := filepath.Dir(event.Name)
+				userArgs := getUserArgs()
+				codeLanguage := getFileLang(userArgs[0])
+				log.Println("codeLanguage:", codeLanguage)
 				runTests(dir, codeLanguage)
 			case err, ok := <-watcher.Errors:
 				if !ok {
